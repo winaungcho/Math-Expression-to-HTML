@@ -1,5 +1,16 @@
 <?php
 include("mathexphtml.php");
+
+/******
+ * mathExpHtml Class and example file
+ *
+ * This class is free for the educational use as long as maintain this header together with this class.
+ * Author: Win Aung Cho
+ * Contact winaungcho@gmail.com
+ * version 1.0
+ * Date: 26-11-2022
+ *
+ ******/
 ?>
 
 <html>
