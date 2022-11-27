@@ -32,7 +32,7 @@ class MathExpHtml
         $this->tokens = $this->str2tokens($str);
     }
 
-    public function printtokens()
+    public function printTokens()
     {
         echo "<pre>";
         foreach ($this->tokens as $token) {
