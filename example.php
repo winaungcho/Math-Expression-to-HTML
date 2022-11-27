@@ -1,7 +1,6 @@
 <?php
-include("MathExpHtml.php");
 
-/******
+/**
  * MathExpHtml Class and example file
  *
  * This class is free for the educational use as long as maintain this header together with this class.
@@ -9,11 +8,13 @@ include("MathExpHtml.php");
  * Contact winaungcho@gmail.com
  * version 1.0
  * Date: 26-11-2022
- *
- ******/
+ */
+
+include("MathExpHtml.php");
+
 ?>
 
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<style>
@@ -99,7 +100,6 @@ include("MathExpHtml.php");
 			<?php
 				$str = "a=sum(i=1,3)(23.5*{vec}-(((cos(2+θ/2)+asd9)^2)/4.5+sin(0.5*θ))/(20.06+π*(16))^2-26)";
 				$parser = new MathExpHtml($str);
-
 				$parser->printtokens();
 				$parser->gethtml();
 			?>
