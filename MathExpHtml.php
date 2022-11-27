@@ -1,7 +1,7 @@
 <?php
 
 /**
- * mathExpHtml Class
+ * MathExpHtml Class
  * 
  * This class is free for the educational use as long as maintain this header together with this class.
  * Author: Win Aung Cho
@@ -9,7 +9,7 @@
  * version 1.0
  * Date: 26-11-2022
  */
-class mathExpHtml
+class MathExpHtml
 {
     private $tokens;
 
