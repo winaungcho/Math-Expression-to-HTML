@@ -30,23 +30,23 @@ class mathExpHtml
         $this->tokens = $this->str2tokens($str);
     }
 
-    function operators()
+    private function operators()
     {
         return _OPERATORS;
     }
 
-    function str2tokens($str)
+    private function str2tokens($str)
     {
         $tokens = preg_split('/([<>()*\/=^+-])\s*|([\d.]+)\s*|(\w+)\s*|({\w+})\s*/', $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
         return $tokens;
     }
-    function tokentype($token)
+    private function tokentype($token)
     {
         return (is_numeric($token) ? "value" : (in_array($token, _OPERATORS) ? "operator" : (preg_match('/^[\w-]+$/', $token) ? "alphanum" : 
         	(preg_match('/({\w+})/', $token)?"vector":"none"))));
     }
 
-    function mathhtml($a, $o, $b)
+    private function mathhtml($a, $o, $b)
     {
         $html = "";
         switch ($o)
@@ -76,7 +76,7 @@ class mathExpHtml
         return ($html);
     }
 
-    function testknownoperator($token)
+    private function testknownoperator($token)
     {
     	$pattern = "/([(),+])\s*/";
     	$test = preg_split($pattern, $token, 8, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -92,7 +92,7 @@ class mathExpHtml
     	return $html;
     }
 
-    function formatelement($tokens)
+    private function formatelement($tokens)
     {
         $len = count($tokens);
         for ($i = 0;$i < $len;$i++) {
@@ -118,7 +118,7 @@ class mathExpHtml
         return $tokens;
     }
     
-    function parsepar($tokens)
+    private function parsepar($tokens)
     {
         $tokens = $this->formatelement($tokens);
         $pos = 0;
@@ -158,7 +158,7 @@ class mathExpHtml
         return $tokens;
     }
 
-    function exphtml($tokens)
+    private function exphtml($tokens)
     {
         $len = count($tokens);
         
@@ -228,7 +228,7 @@ class mathExpHtml
         return $a;
     }
 
-    function printtokens()
+    public function printTokens()
     {
         echo "<pre>";
         foreach ($this->tokens as $token)
@@ -240,7 +240,7 @@ class mathExpHtml
         echo "<br/>";
     }
 
-    function gethtml()
+    public function getHtml()
     {
         $tokens = $this->parsepar($this->tokens);
         echo "" . $this->exphtml($tokens) . "";
