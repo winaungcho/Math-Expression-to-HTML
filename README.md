@@ -15,7 +15,7 @@ $expression = "a=sum(i=1,3)(23.5*{vec}-(((cos(2+θ/2)+asd9)^2)/4.5+sin(0.5*θ))/
 
 $parser = new mathExpHtml($expression);
 $parser->printTokens();
-$parser->getHtml();
+echo $parser->getHtml();
 ```
 
 ## Features
