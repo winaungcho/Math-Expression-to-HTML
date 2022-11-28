@@ -6,7 +6,6 @@
  * This class is free for the educational use as long as maintain this header together with this class.
  * Author: Win Aung Cho
  * Contact winaungcho@gmail.com
- * version 1.0, 26-11-22
  * version 1.2
  * Date: 28-11-2022
  */
@@ -27,6 +26,7 @@ class mathExpHtml
             '<',
             '>',
             ',',
+            '[',
             '±'
             
         ));
@@ -69,6 +69,9 @@ class mathExpHtml
                 break;
             case '^':
                 $html = "$a<sup>$b</sup>";
+                break;
+            case '[':
+                $html = "$a<sub>$b</sub>";
                 break;
             case '/':
                 $html = "<div class=\"fraction\">";
