@@ -8,7 +8,7 @@ Visit following link and check demo in forum.
 
 ## Usage
 
-First include the `mathExpHtml.php` class in your file, and use the class as following to generate the HTML for the math expressions:
+First include the `mathexphtml.php` class in your file, and use the class as following to generate the HTML for the math expressions:
 
 ```php
 $expression = "a=sum(i=1,3)(23.5*{vec}-(((cos(2+θ/2)+asd9)^2)/4.5+sin(0.5*θ))/(20.06+π*(16))^2-26)";
