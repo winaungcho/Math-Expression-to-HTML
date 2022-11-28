@@ -99,7 +99,7 @@ include("mathexphtml.php");
 				$str = "a=sum(i=1,3)(23.5*{vec}-(((cos(2+θ/2)+asd9)^2)/4.5+sin(0.5*θ))/(20.06+π*(16))^2-26)";
 				$parser = new mathExpHtml($str);
 				$parser->printTokens();
-				$parser->getHtml();
+				echo $parser->getHtml();
 			?>
 		</div>
 	</body>
