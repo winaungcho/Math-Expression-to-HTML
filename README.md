@@ -20,7 +20,8 @@ $parser->gethtml();
 
 ## Features
 Algorythm is very simple.
-- String is tokenized using preg_split into array of tokens, 
+
+- String is tokenized using `preg_split` into array of tokens, 
 - Token types are value, alpha-numeric and operator.
 - Alpha numeric represents as a variable or function name.
 - There are some known functions such as summation sign sum(i=1, 5).
