@@ -8,12 +8,11 @@
  * Contact winaungcho@gmail.com
  * version 1.0
  * Date: 26-11-2022
- *
- **/
+ */
 class mathExpHtml
 {
     private $tokens;
-    function __construct($str)
+    public function __construct($str)
     {
         define('_OPERATORS', array(
             '(',
@@ -180,7 +179,6 @@ class mathExpHtml
             }
         }
         $len = count($tokens);
-        //echo "length ".$len."<br/>";
         $pos = 0;
         while ($pos < $len - 2) {
             $a = $tokens[$pos];
