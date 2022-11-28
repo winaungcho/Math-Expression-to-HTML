@@ -243,7 +243,7 @@ class mathExpHtml
     public function getHtml()
     {
         $tokens = $this->parsepar($this->tokens);
-        echo "" . $this->exphtml($tokens) . "";
+        return $this->exphtml($tokens);
     }
 }
 
