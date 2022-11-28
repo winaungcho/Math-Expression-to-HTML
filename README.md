@@ -4,7 +4,7 @@ Produce html code from the mathematic expression string
 
 ## Demo Version
 Visit following link and check demo in forum.
-[Demo](https://edu.structsoftlab.com/forum/)
+[Demo](https://edu.structsoftlab.com/forum/?cat=general&subcat=forumhelp&post=1669612496)
 
 ## Usage
 
