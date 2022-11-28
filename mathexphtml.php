@@ -6,8 +6,9 @@
  * This class is free for the educational use as long as maintain this header together with this class.
  * Author: Win Aung Cho
  * Contact winaungcho@gmail.com
- * version 1.1
- * Date: 26-11-2022
+ * version 1.0, 26-11-22
+ * version 1.2
+ * Date: 28-11-2022
  */
 class mathExpHtml
 {
@@ -80,18 +81,31 @@ class mathExpHtml
         return ($html);
     }
 
-    private function testknownoperator($token)
+    private function testknownoperator($name, $token)
     {
-    	$pattern = "/([(),+])\s*/";
-    	$test = preg_split($pattern, $token, 8, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     	$html = "";
     	
-    	if (strip_tags($test[0]) == 'sum'){
+    	if (strip_tags($name) == 'sum'){
     		$html = "<span class=\"intsuma\">".
-    		"<span class=\"lim\">".$test[4]."</span>".
+    		"<span class=\"lim\">".$token[1]."</span>".
     		"<span class=\"sum-frac\">&sum;</span>".
-    		"<span class=\"lim\">".$test[2]."</span>".
-    		"</span>";
+    		"<span class=\"lim\">".$token[0]."</span>".
+    		"</span>".$token[2];
+    	} else if (strip_tags($name) == 'int'){
+    		$html = "<span class=\"intsuma\">".
+    		"<span class=\"lim\">".$token[1]."</span>".
+    		"<span class=\"sum-frac\">&int;</span>".
+    		"<span class=\"lim\">".$token[0]."</span>".
+    		"</span>".$token[2]. $token[3];
+    	} else {
+    		$l = count($token);
+    		$html = $name."(";
+    		for ($i=0;$i<$l;$i++) {
+    			if ($i > 0)
+    				$html .= ',';
+    			$html .= $token[$i];
+    		}
+    		$html .= ")";
     	}
     	return $html;
     }
@@ -100,7 +114,7 @@ class mathExpHtml
     {
         $len = count($tokens);
         for ($i = 0;$i < $len;$i++) {
-            $a = $tokens[$i];
+            $a = trim($tokens[$i]);
             $b = ($i < $len - 1) ? trim($tokens[$i + 1]) : " ";
             if ($this->tokentype($a) == "alphanum") {
                 if ($b[0] == '(') {
@@ -152,8 +166,21 @@ class mathExpHtml
                 $level--;
                 $subtokens = array_slice($tokens, $start + 1, $end - $start - 1);
                 array_splice($tokens, $start + 1, $end - $start);
-                $tokens[$start] = "(" . $this->exphtml($subtokens) . ")";
-                $pos = $start;
+                $arg = $this->exphtml($subtokens);
+                
+                if ($this->tokentype(strip_tags($tokens[$start-1])) == "alphanum"){
+                	$tokens[$start-1] = $this->testknownoperator($tokens[$start-1], $arg);
+                	array_splice($tokens, $start, 1);
+                	$pos = $start;
+                }
+                
+                else {
+                
+                	$tokens[$start] = "(" . $arg[0] . ")";
+                	$pos = $start;
+                }
+                
+                $len = count($tokens);
             }
             $pos++;
         }
@@ -165,9 +192,8 @@ class mathExpHtml
     private function exphtml($tokens)
     {
         $len = count($tokens);
-
         if ($len <= 2) {
-            return $tokens[0];
+            return $tokens;
         }
         // merge unary operator -
         for ($i = 0;$i < $len;$i++) {
@@ -187,21 +213,6 @@ class mathExpHtml
         }
         
         $len = count($tokens);
-        
-        // merge function
-        for ($i = 0;$i < $len;$i++) {
-            $a = $tokens[$i];
-            $b = ($i < $len - 1) ? trim($tokens[$i + 1]) : " ";
-            if ($this->tokentype(strip_tags($a)) == "alphanum") {
-                if ($b[0] == '(') {
-                	$tokens[$i] = $a . $b;
-                	array_splice($tokens, $i + 1, 1);
-                	$html = $this->testknownoperator($tokens[$i]);
-                	if ($html != "") $tokens[$i] = $html;
-                }
-            }
-        }
-
         $len = count($tokens);
         $pos = 0;
         while ($pos < $len - 2) {
@@ -235,28 +246,34 @@ class mathExpHtml
 
         $pos = 0;
         $a = $tokens[$pos];
+        $arg = [];
         while ($pos < $len - 2) {
             $o = $tokens[$pos + 1];
             $b = $tokens[$pos + 2];
             
             if ($this->tokentype($o) == "operator")
             {
+            	if ($o == ','){
+            		$arg[] = $a;
+            		$a = $b;
+            	} else
                 $a = $this->mathhtml($a, $o, $b);
             }
             $pos += 2;
         }
+        
         if ($pos < $len-1 && $tokens[$pos+1][0] == '(') {
         	$a .= $tokens[$pos+1];
         }
         
-        return $a;
+        $arg[] = $a;
+        return $arg;
     }
 
     public function printTokens()
     {
         echo "<pre>";
-        foreach ($this->tokens as $token)
-        {
+        foreach ($this->tokens as $token) {
             $token = trim($token);
             echo $token . "  is " . $this->tokentype($token) . "<br/>";
         }
@@ -266,7 +283,8 @@ class mathExpHtml
     public function getHtml()
     {
         $tokens = $this->parsepar($this->tokens);
-        return $this->exphtml($tokens);
+        $arg = $this->exphtml($tokens);
+        return $arg[0];
     }
 }
 
