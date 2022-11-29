@@ -96,10 +96,21 @@ include("mathexphtml.php");
 	<body>
 		<div style="overflow-x:auto;overflow-y:auto; width:100%;height:100%;white-space: nowrap;">
 			<?php
-				$str = "a=sum(i=1,3)(23.5*{vec}-(((cos(2+θ/2)+asd9)^2)/4.5+sin(0.5*θ))/(20.06+π*(16))^2-26)";
+				$str = "a=sum(i=1,3,23.5*{vec}-(((atan(2+θ/2,7)+asdθ9[2)^2)/4.5+sin(0.5*θ))/(20.06+π*(16))^2-26)";
 				$parser = new mathExpHtml($str);
 				$parser->printTokens();
 				echo $parser->getHtml();
+				$str = "-b±(b^2-14*a*c)^0.5/(2*a)";
+				$parser = new mathExpHtml($str);
+				echo $parser->getHtml()."<br/>";
+
+				$str = "sum(8, 12, 5+2*x*(θ-6/x)^2)";
+				$parser = new mathExpHtml($str);
+				echo $parser->getHtml()."<br/>";
+
+				$str = "int(8, 12, 5+2*x*(θ-6/x)^2, dx)";
+				$parser = new mathExpHtml($str);
+				echo $parser->getHtml()."<br/>";
 			?>
 		</div>
 	</body>
