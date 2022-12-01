@@ -6,8 +6,10 @@
  * This class is free for the educational use as long as maintain this header together with this class.
  * Author: Win Aung Cho
  * Contact winaungcho@gmail.com
- * version 1.2
- * Date: 28-11-2022
+ * version 1.1 26-11-2022
+ * version 1.2 28-11-2022
+ * version 1.3
+ * Date: 1-12-2022
  */
 class mathExpHtml
 {
@@ -26,8 +28,10 @@ class mathExpHtml
             '<',
             '>',
             ',',
+            '!',
             '[',
-            '±'
+            '±',
+            '×'
             
         ));
         $this->tokens = $this->str2tokens($str);
@@ -48,10 +52,28 @@ class mathExpHtml
         return (is_numeric($token) ? "value" : (in_array($token, _OPERATORS) ? "operator" : (preg_match('/^[a-zA-Z0-9\p{Greek}]+$/u', $token) ? "alphanum" : 
         	(preg_match('/({\w+})/', $token)?"vector":"none"))));
     }
-
+    private function vechtml($b){
+    	if (is_array($b)){
+    		if (count($b) == 1) return $b[0];
+        	$bhtml = "<table class=\"matrix\">";
+        	foreach ($b as $r){
+        		$bhtml .= "<tr>";
+        		if (is_array($r)){
+        			foreach ($r as $c){
+        				$bhtml .= "<td>".$c."</td>";
+        			}
+        		} else $bhtml .= "<td>".$r."</td>";
+        		$bhtml .= "</tr>";
+        	}
+        	$bhtml .= "</table>";
+        	return $bhtml;
+        } else return $b;
+    }
     private function mathhtml($a, $o, $b)
     {
         $html = "";
+        $a = $this->vechtml($a);
+        $b = $this->vechtml($b);
         switch ($o)
         {
             case '+':
@@ -117,7 +139,7 @@ class mathExpHtml
     {
         $len = count($tokens);
         for ($i = 0;$i < $len;$i++) {
-            $a = trim($tokens[$i]);
+            $a = is_array($tokens[$i])? $tokens[$i]:trim($tokens[$i]);
             $b = ($i < $len - 1) ? trim($tokens[$i + 1]) : " ";
             if ($this->tokentype($a) == "alphanum") {
                 if ($b[0] == '(') {
@@ -129,7 +151,7 @@ class mathExpHtml
             	$a = "<span style='color:blue;'>$a</span>";
             } else if ($this->tokentype($a) == "vector") {
             	$a = str_replace(array("{", "}"), "", $a);
-            	$s = strlen($a);
+            	$s = strlen($a)*1.2;
             	$a = " <span class=\"sym\"><var>$a</var>".
             		"<span class=\"vec\" style=\"transform:scale($s,1.0);\">&rarr;</span>".
             		"</span>";
@@ -138,7 +160,11 @@ class mathExpHtml
         }
         return $tokens;
     }
-    
+    private function copyarray($arg)
+    {
+    	$arrObject = new ArrayObject($arg);
+        return $arrObject->getArrayCopy();
+    }
     private function parsepar($tokens)
     {
         $tokens = $this->formatelement($tokens);
@@ -168,18 +194,24 @@ class mathExpHtml
                 $end = $pos;
                 $level--;
                 $subtokens = array_slice($tokens, $start + 1, $end - $start - 1);
+                $subtokens = $this->copyarray($subtokens);
                 array_splice($tokens, $start + 1, $end - $start);
                 $arg = $this->exphtml($subtokens);
                 
-                if ($this->tokentype(strip_tags($tokens[$start-1])) == "alphanum"){
+                // check function
+                if ($this->tokentype(strip_tags($tokens[$start-1])) == "alphanum" && $start > 0){
                 	$tokens[$start-1] = $this->testknownoperator($tokens[$start-1], $arg);
                 	array_splice($tokens, $start, 1);
                 	$pos = $start;
+                	
                 }
-                
                 else {
-                
-                	$tokens[$start] = "(" . $arg[0] . ")";
+                	if (count($arg) == 1) {
+                		$tokens[$start] = "(" . $arg[0] . ")";
+                	} else {
+                		$arrObject = new ArrayObject($arg);
+                		$tokens[$start] = $this->copyarray($arg);
+                	}
                 	$pos = $start;
                 }
                 
@@ -187,7 +219,6 @@ class mathExpHtml
             }
             $pos++;
         }
-        
         if ($level != 0) $tokens = $this->parsepar($tokens);
         return $tokens;
     }
@@ -195,15 +226,15 @@ class mathExpHtml
     private function exphtml($tokens)
     {
         $len = count($tokens);
-        if ($len <= 2) {
+        if ($len == 1) {
             return $tokens;
         }
         // merge unary operator -
         for ($i = 0;$i < $len;$i++) {
             $a = $tokens[$i];
-            $b = ($i < $len - 1) ? trim($tokens[$i + 1]) : " ";
-            $c = ($i < $len - 2) ? trim($tokens[$i + 2]) : " ";
-            if ($this->tokentype(strip_tags($a)) == "operator") {
+            $b = ($i < $len - 1) ? $tokens[$i + 1] : " ";
+            $c = ($i < $len - 2) ? $tokens[$i + 2] : " ";
+            if ($this->tokentype($a) == "operator") {
                 if ($this->tokentype($b) == 'operator' && $b == '-') {
                 	$tokens[$i+1] = $b . $c;
                 	array_splice($tokens, $i + 2, 1);
@@ -212,10 +243,14 @@ class mathExpHtml
                 	$tokens[$i] = $a . $b;
                 	array_splice($tokens, $i + 1, 1);
                 }
+            } else if ($this->tokentype(strip_tags($a)) == "alphanum" || $this->tokentype(strip_tags($a)) == "value") {
+            	if ($this->tokentype($b) == 'operator' && $b == '!') {
+                	$tokens[$i] = $a . $b;
+                	array_splice($tokens, $i + 1, 1);
+                } 
             }
         }
-        
-        $len = count($tokens);
+      
         $len = count($tokens);
         $pos = 0;
         while ($pos < $len - 2) {
